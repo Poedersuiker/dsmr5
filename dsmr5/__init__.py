@@ -36,19 +36,26 @@ class DSMR:
 
     def save_data(self, line):
         self.logger.debug(line)
-        OBISref, data = line.split('(', 1)
-        data = data[:-1]
+        try:
+            OBISref, data = line.split('(', 1)
+            data = data[:-1]
 
-        if data.find('*'):
-            data = data[:data.find('*')]
+            if data.find('*'):
+                data = data[:data.find('*')]
 
-        sql = "INSERT INTO data (OBIS_ref, value) VALUES (%s, %s)"
-        val = (OBISref, data)
+            sql = "INSERT INTO data (OBIS_ref, value) VALUES (%s, %s)"
+            val = (OBISref, data)
 
-        cursor = self.db.cursor()
-        cursor.execute(sql, val)
-        self.db.commit()
-        self.logger.info("Data {0} inserted at {1}".format(data, cursor.lastrowid))
+            cursor = self.db.cursor()
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.logger.info("Data {0} inserted at {1}".format(data, cursor.lastrowid))
+        except ValueError as e:
+            self.logger.error(line)
+            self.logger.error(e)
+        except mariadb.errors.IntegrityError as e:
+            self.logger.error(line)
+            self.logger.error(e)
 
 
 if __name__ == '__main__':
