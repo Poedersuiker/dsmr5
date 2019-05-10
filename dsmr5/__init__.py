@@ -40,7 +40,7 @@ class DSMR:
         data = data[:-1]
 
         if data.find('*'):
-            data = data[data.find('*')]
+            data = data[:data.find('*')]
 
         sql = "INSERT INTO data (OBIS_ref, value) VALUES (%s, %s)"
         val = (OBISref, data)
