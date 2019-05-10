@@ -39,6 +39,9 @@ class DSMR:
         OBISref, data = line.split('(', 1)
         data = data[:-1]
 
+        if data.find('*'):
+            data = data[data.find('*')]
+
         sql = "INSERT INTO data (OBIS_ref, value) VALUES (%s, %s)"
         val = (OBISref, data)
 
