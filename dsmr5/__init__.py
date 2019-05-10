@@ -37,10 +37,9 @@ class DSMR:
     def save_data(self, line):
         self.logger.debug(line)
         OBISref, data = line.split('(', 1)
-        self.logger.debug(OBISref)
         data = data[:-1]
 
-        sql = "INSERT INTO data (OBIS_ref, value) VALUES ({s}, {s})"
+        sql = "INSERT INTO data (OBIS_ref, value) VALUES (%s, %s)"
         val = (OBISref, data)
 
         cursor = self.db.cursor()
