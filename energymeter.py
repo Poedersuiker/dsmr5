@@ -11,3 +11,4 @@ dsmr = DSMR()
 while running:
     line = ser.readline()
     print(line)
+    dsmr.decode_line(line)
