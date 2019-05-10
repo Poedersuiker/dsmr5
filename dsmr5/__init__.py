@@ -25,7 +25,7 @@ class DSMR:
     def decode_line(self, line):
         line = line.decode('utf-8').strip()
         self.logger.debug(line)
-        if len(line) < 5:
+        if len(line) < 8:
             self.logger.warning('No data in line')
         elif line[0] == '/':
             self.logger.info('Start of Telegram')
