@@ -10,8 +10,8 @@ class DSMR:
         self.version = 'v0.1'
         self.logger = logging.getLogger('EnergyMeter')
 
-        self.logger.setLevel(logging.DEBUG)
-        # self.logger.setLevel(logging.INFO)
+        # self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
 
         ch = logging.StreamHandler()
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -49,7 +49,7 @@ class DSMR:
             cursor = self.db.cursor()
             cursor.execute(sql, val)
             self.db.commit()
-            self.logger.info("Data {0} inserted at {1}".format(data, cursor.lastrowid))
+            self.logger.debug("Data {0} inserted at {1}".format(data, cursor.lastrowid))
         except ValueError as e:
             self.logger.error(line)
             self.logger.error(e)
