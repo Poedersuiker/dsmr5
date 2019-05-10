@@ -48,7 +48,7 @@ class DSMR:
         cursor = self.db.cursor()
         cursor.execute(sql, val)
         self.db.commit()
-        self.logger.info("Data inserted: {0}".format(cursor.lastrowid))
+        self.logger.info("Data {0} inserted at {1}".format(data, cursor.lastrowid))
 
 
 if __name__ == '__main__':
