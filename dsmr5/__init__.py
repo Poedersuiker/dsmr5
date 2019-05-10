@@ -3,13 +3,17 @@ import logging
 
 
 class DSMR:
+    debug = False
+
     def __init__(self):
         self.version = 'v0.1'
         self.logger = logging.getLogger('EnergyMeter')
-        self.logger.setLevel(logging.DEBUG)
 
         ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
+
+        ch.setLevel(logging.DEBUG)
+        # ch.setLevel(logging.INFO)
+
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
         self.logger.addHandler(ch)
@@ -30,7 +34,7 @@ class DSMR:
     def interpret_data(self, line):
         self.logger.debug(line)
         OBISref, data = line.split('(', 1)
-        self.logger.info(OBISref)
+        self.logger.debug(OBISref)
 
         if OBISref == '1-0:1.7.0':
             self.actual_electricity_power_delivered(data)
