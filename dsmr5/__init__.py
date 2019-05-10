@@ -9,11 +9,10 @@ class DSMR:
         self.version = 'v0.1'
         self.logger = logging.getLogger('EnergyMeter')
 
+        self.logger.setLevel(logging.DEBUG)
+        # self.logger.setLevel(logging.INFO)
+
         ch = logging.StreamHandler()
-
-        ch.setLevel(logging.DEBUG)
-        # ch.setLevel(logging.INFO)
-
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
         self.logger.addHandler(ch)
