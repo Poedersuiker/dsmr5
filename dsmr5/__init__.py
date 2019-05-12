@@ -21,9 +21,11 @@ class DSMR:
 
         self.db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
 
+        self.last_telegram = []
 
     def decode_line(self, line):
         line = line.decode('utf-8').strip()
+        self.last_telegram.append(line)
         self.logger.debug(line)
         if len(line) < 8:
             self.logger.debug('No data in line')
@@ -31,6 +33,11 @@ class DSMR:
             self.logger.debug('Start of Telegram')
         elif line[0] == '!':
             self.logger.debug('End of Telegram')
+            telegram_file = open('last_telegram.txt', 'w')
+            bytes_written = telegram_file.write(''.join(self.last_telegram))
+            telegram_file.close()
+            self.last_telegram = []
+            self.logger.debug('Telegram saved with {0} bytes'.format(bytes_written))
         else:
             self.save_data(line)
 
