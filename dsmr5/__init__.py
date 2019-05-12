@@ -45,6 +45,9 @@ class DSMR:
             if data.find('*'):
                 data = data[:data.find('*')]
 
+            OBISref = OBISref.strip()
+            data = data.strip()
+
             sql = "INSERT INTO data (OBIS_ref, value) VALUES (%s, %s)"
             val = (OBISref, data)
 
