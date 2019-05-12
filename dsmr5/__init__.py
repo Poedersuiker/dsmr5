@@ -62,7 +62,7 @@ class DSMR:
             self.logger.error("OBISred      : {0}".format(OBISref))
             self.logger.error("Data         : {0}".format(data))
             self.logger.error(e)
-        else:
+        except:
             self.logger.error("Something went wrong!!!")
             self.logger.error("Input line   : {0}".format(line))
             self.logger.error("OBISred      : {0}".format(OBISref))
