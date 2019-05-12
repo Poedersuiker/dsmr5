@@ -36,6 +36,8 @@ class DSMR:
 
     def save_data(self, line):
         self.logger.debug(line)
+        OBISref = ""
+        data = ""
         try:
             OBISref, data = line.split('(', 1)
             data = data[:-1]
