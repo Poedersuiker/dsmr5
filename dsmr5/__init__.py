@@ -28,9 +28,9 @@ class DSMR:
         if len(line) < 8:
             self.logger.debug('No data in line')
         elif line[0] == '/':
-            self.logger.info('Start of Telegram')
+            self.logger.debug('Start of Telegram')
         elif line[0] == '!':
-            self.logger.info('End of Telegram')
+            self.logger.debug('End of Telegram')
         else:
             self.save_data(line)
 
@@ -51,11 +51,22 @@ class DSMR:
             self.db.commit()
             self.logger.debug("Data {0} inserted at {1}".format(data, cursor.lastrowid))
         except ValueError as e:
-            self.logger.error(line)
+            self.logger.error("ValueError")
+            self.logger.error("Input line   : {0}".format(line))
+            self.logger.error("OBISred      : {0}".format(OBISref))
+            self.logger.error("Data         : {0}".format(data))
             self.logger.error(e)
         except mariadb.errors.IntegrityError as e:
-            self.logger.error(line)
+            self.logger.error("DB error")
+            self.logger.error("Input line   : {0}".format(line))
+            self.logger.error("OBISred      : {0}".format(OBISref))
+            self.logger.error("Data         : {0}".format(data))
             self.logger.error(e)
+        else:
+            self.logger.error("Something went wrong!!!")
+            self.logger.error("Input line   : {0}".format(line))
+            self.logger.error("OBISred      : {0}".format(OBISref))
+            self.logger.error("Data         : {0}".format(data))
 
 
 if __name__ == '__main__':
