@@ -1,6 +1,7 @@
 import serial
 import threading
 import logging
+import datetime
 from collections import deque
 import mysql.connector as mariadb
 
@@ -28,18 +29,29 @@ class DSMR(threading.Thread):
         self.dsmr_reader = DSMRReader(self.dsmr_queue)
         self.dsmr_reader.start()
 
+        self.last_voltage_L1 = 0
+        self.last_voltage_L2 = 0
+        self.last_voltage_L3 = 0
+        self.get_last_values()
+
     def run(self):
         while True:
             try:
                 if len(self.dsmr_queue):
                     next_line = self.dsmr_queue.popleft()
-                    print(next_line)
+                    self.decode_line(next_line)
             except:
                 self.logger.error("Somthing went wrong getting line from queue")
 
     def decode_line(self, line):
+        """
+        Split the line into OBISref and data. Selected OBIS references will be handled.
+        :param line: Complete line from serial connection.
+        :return: Nothing
+        """
         line = line.decode('utf-8').strip()
         self.logger.debug(line)
+
         if len(line) < 8:
             self.logger.debug('No data in line')
         elif line[0] == '/':
@@ -47,22 +59,76 @@ class DSMR(threading.Thread):
         elif line[0] == '!':
             self.logger.debug('End of Telegram')
         else:
-            self.save_data(line)
+            OBISref = ""
+            data = ""
 
-    def save_data(self, line):
+            try:
+                OBISref, data = line.split('(', 1)
+                data = data[:-1]
+
+                if data.find('*'):
+                    data = data[:data.find('*')]
+
+                OBISref = OBISref.strip()
+                data = data.strip()
+
+                if OBISref == '1-0:32.7.0':
+                    self.save_voltage_L1(data)
+                elif OBISref == '1-0:52.7.0':
+                    self.save_voltage_L2(data)
+                elif OBISref == '1-0:72.7.0':
+                    self.save_voltage_L3(data)
+                else:
+                    self.save_data(OBISref, data)
+            except:
+                self.logger.error("Splitting line failed")
+
+    def save_voltage_L1(self, data):
+        self.logger.debug("save_voltage_L1: New voltage")
+        if data != self.last_voltage_L1:
+            cursor = self.db.cursor()
+            sql = "INSERT INTO voltage_L1 (`date`, `value`) VALUES (%s, %s)"
+            val = (datetime.datetime.now(), data)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_voltage_L1 = data
+        else:
+            self.logger.debug("save_voltage_L1: Voltage hasn't changed")
+
+    def save_voltage_L2(self, data):
+        self.logger.debug("save_voltage_L2: New voltage")
+        if data != self.last_voltage_L2:
+            cursor = self.db.cursor()
+            sql = "INSERT INTO voltage_L2 (`date`, `value`) VALUES (%s, %s)"
+            val = (datetime.datetime.now(), data)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_voltage_L2 = data
+        else:
+            self.logger.debug("save_voltage_L2: Voltage hasn't changed")
+
+    def save_voltage_L3(self, data):
+        self.logger.debug("save_voltage_L3: New voltage")
+        if data != self.last_voltage_L3:
+            cursor = self.db.cursor()
+            sql = "INSERT INTO voltage_L3 (`date`, `value`) VALUES (%s, %s)"
+            val = (datetime.datetime.now(), data)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_voltage_L3 = data
+        else:
+            self.logger.debug("save_voltage_L3: Voltage hasn't changed")
+
+    def save_data(self, OBISref, data):
+        """
+        If the OBISref is not yet implemented, Save all data to the data table.
+        :param OBISref: OBIS reference from DSMR table
+        :param data: value of OBIS. INT or FLOAT
+        :return: Noting
+        """
         self.logger.debug(line)
-        OBISref = ""
-        data = ""
+
         try:
-            OBISref, data = line.split('(', 1)
-            data = data[:-1]
-
-            if data.find('*'):
-                data = data[:data.find('*')]
-
-            OBISref = OBISref.strip()
-            data = data.strip()
-
             sql = "INSERT INTO data (OBIS_ref, value) VALUES (%s, %s)"
             val = (OBISref, data)
 
@@ -88,6 +154,26 @@ class DSMR(threading.Thread):
             self.logger.error("OBISred      : {0}".format(OBISref))
             self.logger.error("Data         : {0}".format(data))
 
+    def get_last_values(self):
+        cursor = self.db.cursor()
+
+        # Get last voltage L1
+        sql = "SELECT value FROM voltage_L1 ORDER BY date DESC LIMIT 1"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        self.last_voltage_L1 = results[0][0]
+
+        # Get last voltage L2
+        sql = "SELECT value FROM voltage_L2 ORDER BY date DESC LIMIT 1"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        self.last_voltage_L2 = results[0][0]
+
+        # Get last voltage L3
+        sql = "SELECT value FROM voltage_L3 ORDER BY date DESC LIMIT 1"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        self.last_voltage_L3 = results[0][0]
 
 class DSMRReader(threading.Thread):
 
