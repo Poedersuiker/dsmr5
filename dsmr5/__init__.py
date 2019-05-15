@@ -155,22 +155,34 @@ class DSMR(threading.Thread):
         cursor = self.db.cursor()
 
         # Get last voltage L1
-        sql = "SELECT value FROM voltage_L1 ORDER BY date DESC LIMIT 1"
-        cursor.execute(sql)
-        results = cursor.fetchall()
-        self.last_voltage_L1 = results[0][0]
+        try:
+            sql = "SELECT value FROM voltage_L1 ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_voltage_L1 = results[0][0]
+            else:
+                self.last_voltage_L1 = 0
 
-        # Get last voltage L2
-        sql = "SELECT value FROM voltage_L2 ORDER BY date DESC LIMIT 1"
-        cursor.execute(sql)
-        results = cursor.fetchall()
-        self.last_voltage_L2 = results[0][0]
+            # Get last voltage L2
+            sql = "SELECT value FROM voltage_L2 ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_voltage_L2 = results[0][0]
+            else:
+                self.last_voltage_L2 = 0
 
-        # Get last voltage L3
-        sql = "SELECT value FROM voltage_L3 ORDER BY date DESC LIMIT 1"
-        cursor.execute(sql)
-        results = cursor.fetchall()
-        self.last_voltage_L3 = results[0][0]
+            # Get last voltage L3
+            sql = "SELECT value FROM voltage_L3 ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_voltage_L3 = results[0][0]
+            else:
+                self.last_voltage_L3 = 0
+        except:
+            self.logger.error("Last values couldn't be retreived")
 
 class DSMRReader(threading.Thread):
 
