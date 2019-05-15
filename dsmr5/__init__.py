@@ -126,7 +126,7 @@ class DSMR(threading.Thread):
         :param data: value of OBIS. INT or FLOAT
         :return: Noting
         """
-        self.logger.debug(line)
+        self.logger.debug(OBISref, data)
 
         try:
             sql = "INSERT INTO data (OBIS_ref, value) VALUES (%s, %s)"
@@ -138,19 +138,16 @@ class DSMR(threading.Thread):
             self.logger.debug("Data {0} inserted at {1}".format(data, cursor.lastrowid))
         except ValueError as e:
             self.logger.error("ValueError")
-            self.logger.error("Input line   : {0}".format(line))
             self.logger.error("OBISred      : {0}".format(OBISref))
             self.logger.error("Data         : {0}".format(data))
             self.logger.error(e)
         except mariadb.errors.IntegrityError as e:
             self.logger.error("DB error")
-            self.logger.error("Input line   : {0}".format(line))
             self.logger.error("OBISred      : {0}".format(OBISref))
             self.logger.error("Data         : {0}".format(data))
             self.logger.error(e)
         except:
             self.logger.error("Something went wrong!!!")
-            self.logger.error("Input line   : {0}".format(line))
             self.logger.error("OBISred      : {0}".format(OBISref))
             self.logger.error("Data         : {0}".format(data))
 
