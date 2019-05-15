@@ -80,8 +80,10 @@ class DSMR(threading.Thread):
                     self.save_voltage_L3(data)
                 else:
                     self.save_data(OBISref, data)
-            except:
+            except Exception as e:
                 self.logger.error("Splitting line failed")
+                self.logger.error(line)
+                self.logger.error(e)
 
     def save_voltage_L1(self, data):
         self.logger.debug("save_voltage_L1: New voltage")
