@@ -51,7 +51,7 @@ class DSMR(threading.Thread):
         :return: Nothing
         """
         next_line = next_line.decode('utf-8').strip()
-        self.logger.debug(line)
+        self.logger.debug(next_line)
 
         if len(next_line) < 8:
             self.logger.debug('No data in line')
@@ -207,9 +207,5 @@ class DSMRReader(threading.Thread):
 
 
 if __name__ == '__main__':
-    ser = serial.Serial('/dev/ttyUSB0', 115200, parity=serial.PARITY_NONE)
-    running = 1
     dsmr = DSMR()
-    while running:
-        line = ser.readline()
-        print(line)
+    dsmr.start()
