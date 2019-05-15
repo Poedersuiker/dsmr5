@@ -32,6 +32,12 @@ class DSMR(threading.Thread):
         self.last_voltage_L1 = 0
         self.last_voltage_L2 = 0
         self.last_voltage_L3 = 0
+        self.last_power_L1_PP = 0
+        self.last_power_L1_MP = 0
+        self.last_power_L2_PP = 0
+        self.last_power_L2_MP = 0
+        self.last_power_L3_PP = 0
+        self.last_power_L3_MP = 0
         self.get_last_values()
 
     def run(self):
@@ -70,18 +76,111 @@ class DSMR(threading.Thread):
                 OBISref = OBISref.strip()
                 data = data.strip()
 
+                # Voltages L1, L2 and L3
                 if OBISref == '1-0:32.7.0':
                     self.save_voltage_L1(data)
                 elif OBISref == '1-0:52.7.0':
                     self.save_voltage_L2(data)
                 elif OBISref == '1-0:72.7.0':
                     self.save_voltage_L3(data)
+
+                # Power L1 +P -P
+                elif OBISref == '1-0:21.7.0':
+                    self.save_power_L1_PP(data)
+                elif OBISref == '1-0:22.7.0':
+                    self.save_power_L1_MP(data)
+
+                # Power L2 +P -P
+                elif OBISref == '1-0:41.7.0':
+                    self.save_power_L2_PP(data)
+                elif OBISref == '1-0:42.7.0':
+                    self.save_power_L2_MP(data)
+
+                # Power L3 +P -P
+                elif OBISref == '1-0:61.7.0':
+                    self.save_power_L3_PP(data)
+                elif OBISref == '1-0:62.7.0':
+                    self.save_power_L3_MP(data)
+
+                # Save all other data
                 else:
                     self.save_data(OBISref, data)
             except Exception as e:
                 self.logger.error("Splitting line failed")
                 self.logger.error(next_line)
                 self.logger.error(e)
+
+    def save_power_L1_PP(self, data):
+        self.logger.debug("save_power_L1_PP: New power")
+        if data != self.last_power_L1_PP:
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_L1_PP (`date`, `value`) VALUES (%s, %s)"
+            val = (datetime.datetime.now(), data)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_L1_PP = data
+        else:
+            self.logger.debug("save_power_L1_PP: Power hasn't changed")
+
+    def save_power_L1_MP(self, data):
+        self.logger.debug("save_power_L1_MP: New power")
+        if data != self.last_power_L1_MP:
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_L1_MP (`date`, `value`) VALUES (%s, %s)"
+            val = (datetime.datetime.now(), data)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_L1_MP = data
+        else:
+            self.logger.debug("save_power_L1_MP: Power hasn't changed")
+
+    def save_power_L2_PP(self, data):
+        self.logger.debug("save_power_L2_PP: New power")
+        if data != self.last_power_L2_PP:
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_L2_PP (`date`, `value`) VALUES (%s, %s)"
+            val = (datetime.datetime.now(), data)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_L2_PP = data
+        else:
+            self.logger.debug("save_power_L2_PP: Power hasn't changed")
+
+    def save_power_L2_MP(self, data):
+        self.logger.debug("save_power_L2_MP: New power")
+        if data != self.last_power_L2_MP:
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_L2_MP (`date`, `value`) VALUES (%s, %s)"
+            val = (datetime.datetime.now(), data)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_L2_MP = data
+        else:
+            self.logger.debug("save_power_L2_MP: Power hasn't changed")
+
+    def save_power_L3_PP(self, data):
+        self.logger.debug("save_power_L3_PP: New power")
+        if data != self.last_power_L3_PP:
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_L3_PP (`date`, `value`) VALUES (%s, %s)"
+            val = (datetime.datetime.now(), data)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_L3_PP = data
+        else:
+            self.logger.debug("save_power_L3_PP: Power hasn't changed")
+
+    def save_power_L3_MP(self, data):
+        self.logger.debug("save_power_L3_MP: New power")
+        if data != self.last_power_L3_MP:
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_L3_MP (`date`, `value`) VALUES (%s, %s)"
+            val = (datetime.datetime.now(), data)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_L3_MP = data
+        else:
+            self.logger.debug("save_power_L3_MP: Power hasn't changed")
 
     def save_voltage_L1(self, data):
         self.logger.debug("save_voltage_L1: New voltage")
@@ -181,6 +280,60 @@ class DSMR(threading.Thread):
                 self.last_voltage_L3 = results[0][0]
             else:
                 self.last_voltage_L3 = 0
+
+            # Get last power L1 +P
+            sql = "SELECT value FROM power_L1_PP ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_L1_PP = results[0][0]
+            else:
+                self.last_power_L1_PP = 0
+
+            # Get last power L1 -P
+            sql = "SELECT value FROM power_L1_MP ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_L1_MP = results[0][0]
+            else:
+                self.last_power_L1_MP = 0
+
+            # Get last power L2 +P
+            sql = "SELECT value FROM power_L2_PP ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_L2_PP = results[0][0]
+            else:
+                self.last_power_L2_PP = 0
+
+            # Get last power L2 -P
+            sql = "SELECT value FROM power_L2_MP ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_L2_MP = results[0][0]
+            else:
+                self.last_power_L2_MP = 0
+
+            # Get last power L3 +P
+            sql = "SELECT value FROM power_L3_PP ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_L3_PP = results[0][0]
+            else:
+                self.last_power_L3_PP = 0
+
+            # Get last power L3 -P
+            sql = "SELECT value FROM power_L3_MP ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_L3_MP = results[0][0]
+            else:
+                self.last_power_L3_MP = 0
         except:
             self.logger.error("Last values couldn't be retreived")
 
