@@ -43,27 +43,24 @@ class DSMR(threading.Thread):
             except:
                 self.logger.error("Somthing went wrong getting line from queue")
 
-    def decode_line(self, line):
+    def decode_line(self, next_line):
         """
         Split the line into OBISref and data. Selected OBIS references will be handled.
-        :param line: Complete line from serial connection.
+        :param next_line: Complete line from serial connection.
         :return: Nothing
         """
-        line = line.decode('utf-8').strip()
+        next_line = next_line.decode('utf-8').strip()
         self.logger.debug(line)
 
-        if len(line) < 8:
+        if len(next_line) < 8:
             self.logger.debug('No data in line')
-        elif line[0] == '/':
+        elif next_line[0] == '/':
             self.logger.debug('Start of Telegram')
-        elif line[0] == '!':
+        elif next_line[0] == '!':
             self.logger.debug('End of Telegram')
         else:
-            OBISref = ""
-            data = ""
-
             try:
-                OBISref, data = line.split('(', 1)
+                OBISref, data = next_line.split('(', 1)
                 data = data[:-1]
 
                 if data.find('*'):
