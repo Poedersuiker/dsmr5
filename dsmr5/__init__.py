@@ -40,8 +40,9 @@ class DSMR(threading.Thread):
                 if len(self.dsmr_queue):
                     next_line = self.dsmr_queue.popleft()
                     self.decode_line(next_line)
-            except:
+            except Exception as e:
                 self.logger.error("Somthing went wrong getting line from queue")
+                self.logger.error(e)
 
     def decode_line(self, next_line):
         """
@@ -79,7 +80,7 @@ class DSMR(threading.Thread):
                     self.save_data(OBISref, data)
             except Exception as e:
                 self.logger.error("Splitting line failed")
-                self.logger.error(line)
+                self.logger.error(next_line)
                 self.logger.error(e)
 
     def save_voltage_L1(self, data):
