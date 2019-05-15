@@ -9,6 +9,7 @@ class DSMR(threading.Thread):
     debug = False
 
     def __init__(self):
+        threading.Thread.__init__(self)
         self.version = 'v0.1'
         self.logger = logging.getLogger('DSMR')
 
@@ -91,6 +92,7 @@ class DSMR(threading.Thread):
 class DSMRReader(threading.Thread):
 
     def __init__(self, output_queue=deque([])):
+        threading.Thread.__init__(self)
         self.logger = logging.getLogger('DSMR Reader')
 
         # self.logger.setLevel(logging.DEBUG)
