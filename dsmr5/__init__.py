@@ -1,14 +1,16 @@
 import serial
+import threading
 import logging
+from collections import deque
 import mysql.connector as mariadb
 
 
-class DSMR:
+class DSMR(threading.Thread):
     debug = False
 
     def __init__(self):
         self.version = 'v0.1'
-        self.logger = logging.getLogger('EnergyMeter')
+        self.logger = logging.getLogger('DSMR')
 
         # self.logger.setLevel(logging.DEBUG)
         self.logger.setLevel(logging.INFO)
@@ -21,6 +23,18 @@ class DSMR:
 
         self.db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
 
+        self.dsmr_queue = deque([])
+        self.dsmr_reader = DSMRReader(self.dsmr_queue)
+        self.dsmr_reader.start()
+
+    def run(self):
+        while True:
+            try:
+                if len(self.dsmr_queue):
+                    next_line = self.dsmr_queue.popleft()
+                    print(next_line)
+            except:
+                self.logger.error("Somthing went wrong getting line from queue")
 
     def decode_line(self, line):
         line = line.decode('utf-8').strip()
@@ -72,6 +86,39 @@ class DSMR:
             self.logger.error("Input line   : {0}".format(line))
             self.logger.error("OBISred      : {0}".format(OBISref))
             self.logger.error("Data         : {0}".format(data))
+
+
+class DSMRReader(threading.Thread):
+
+    def __init__(self, output_queue=deque([])):
+        self.logger = logging.getLogger('DSMR Reader')
+
+        # self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
+
+        ch = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        self.logger.addHandler(ch)
+        self.logger.info("thread initialised")
+
+        self.output_queue = output_queue
+        self.dsmr_serial = serial.Serial('/dev/ttyUSB0', 115200, parity=serial.PARITY_NONE)
+        self.running = True
+
+    def run(self):
+        self.logger.info("thread started")
+
+        while self.running:
+            try:
+                newline = self.dsmr_serial.readline()
+                self.output_queue.append(newline)
+            except:
+                self.logger.error("cannot read line from serial")
+
+    def stop(self):
+        self.running = False
+        self.dsmr_serial.close()
 
 
 if __name__ == '__main__':
