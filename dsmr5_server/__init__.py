@@ -97,7 +97,7 @@ class DSMRHandler(BaseHTTPRequestHandler):
             sql = "SELECT date, value FROM power_L1_PP ORDER BY date DESC LIMIT 100"
             cursor.execute(sql)
             results = cursor.fetchall()
-            json_content = json.dumps(results)
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
         return json_content
 
 
