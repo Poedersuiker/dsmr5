@@ -32,7 +32,6 @@ class DSMRHandler(BaseHTTPRequestHandler):
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
 
     def do_GET(self):
-        print(self.path)
         path_list = self.path.split('/')
 
         if len(path_list) > 2:
@@ -50,7 +49,6 @@ class DSMRHandler(BaseHTTPRequestHandler):
                     self.wfile.write(bytes(content, "utf8"))
                 except:
                     self.send_response(404)
-                    self.logger.error('{0}: File not found!'.format(file))
             elif extension == 'css':
                 pass
             elif extension == 'js':
