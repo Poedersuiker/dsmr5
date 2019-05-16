@@ -7,13 +7,18 @@ class dsmr5_server:
         self.port = port
         self.httpd = HTTPServer((hostname, port), DSMRHandler)
 
+    def start(self):
+        try:
+            self.httpd.serve_forever()
+        except KeyboardInterrupt:
+            pass
 
 class DSMRHandler(BaseHTTPRequestHandler):
     def __init__(self):
         pass
 
     def do_GET(self):
-        print self.path
+        print(self.path)
 
 
 
