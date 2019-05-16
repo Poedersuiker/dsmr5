@@ -29,6 +29,7 @@ class dsmr5_server:
 
 class DSMRHandler(BaseHTTPRequestHandler):
     def __init__(self, request, client_address, server):
+        print(1)
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
         self.logger = logging.getLogger('Handler')
 
@@ -42,6 +43,7 @@ class DSMRHandler(BaseHTTPRequestHandler):
         self.logger.info("initialized")
 
     def do_GET(self):
+        print(2)
         self.logger.info("GET {0}".format(self.path))
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
