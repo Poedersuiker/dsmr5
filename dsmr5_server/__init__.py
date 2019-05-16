@@ -1,4 +1,5 @@
 import mysql.connector as mariadb
+import json
 import logging
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -35,14 +36,13 @@ class DSMRHandler(BaseHTTPRequestHandler):
         path_list = self.path.split('/')
         print(path_list)
         if len(path_list) > 2:
-            pass
+            self.send_response(404)
         else:
             file = path_list[1]
             name, extension = file.rsplit('.', 1)
             if extension == 'html':
                 try:
                     file_location = 'html/{0}'.format(file)
-                    print(file_location)
                     f = open(file_location, "r")
                     content = f.read()
                     self.send_response(200)
@@ -52,13 +52,43 @@ class DSMRHandler(BaseHTTPRequestHandler):
                 except:
                     self.send_response(404)
             elif extension == 'css':
-                pass
+                try:
+                    file_location = 'css/{0}'.format(file)
+                    f = open(file_location, "r")
+                    content = f.read()
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/css')
+                    self.end_headers()
+                    self.wfile.write(bytes(content, "utf8"))
+                except:
+                    self.send_response(404)
             elif extension == 'js':
-                pass
+                try:
+                    file_location = 'js/{0}'.format(file)
+                    f = open(file_location, "r")
+                    content = f.read()
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/javascript')
+                    self.end_headers()
+                    self.wfile.write(bytes(content, "utf8"))
+                except:
+                    self.send_response(404)
+            elif extension == 'data' or extension == 'json':
+                try:
+                    content = self.get_data(name)
+                    self.send_response(200)
+                    self.send_header('Content-type', 'application/json')
+                    self.end_headers()
+                    self.wfile.write(bytes(content, "utf8"))
+                except:
+                    self.send_response(404)
+
             else:
                 self.send_response(404)
 
-
+    def get_data(self, name):
+        json_content = json.loads(name)
+        return json_content
 
 
 
