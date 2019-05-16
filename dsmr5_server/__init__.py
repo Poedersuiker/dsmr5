@@ -16,9 +16,9 @@ class dsmr5_server:
 
 
 class DSMRHandler(BaseHTTPRequestHandler):
-    def __init__(self):
+    def __init__(self, request, client_address, server):
+        BaseHTTPRequestHandler.__init__(self, request, client_address, server)
         print("Handler initialized")
-        pass
 
     def do_GET(self):
         self.send_response(200)
