@@ -33,7 +33,7 @@ class DSMRHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path_list = self.path.split('/')
-
+        print(path_list)
         if len(path_list) > 2:
             pass
         else:
@@ -41,7 +41,9 @@ class DSMRHandler(BaseHTTPRequestHandler):
             name, extension = file.rsplit('.', 1)
             if extension == 'html':
                 try:
-                    f = open('html/{0}'.format(file), "r")
+                    file_location = 'html/{0}'.format(file)
+                    print(file_location)
+                    f = open(file_location, "r")
                     content = f.read()
                     self.send_response(200)
                     self.send_header('Content-type', 'text/html')
