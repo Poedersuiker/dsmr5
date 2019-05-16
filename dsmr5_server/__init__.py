@@ -29,22 +29,10 @@ class dsmr5_server:
 
 class DSMRHandler(BaseHTTPRequestHandler):
     def __init__(self, request, client_address, server):
-        print(1)
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
-        self.logger = logging.getLogger('Handler')
-
-        # self.logger.setLevel(logging.DEBUG)
-        self.logger.setLevel(logging.INFO)
-
-        ch = logging.StreamHandler()
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        ch.setFormatter(formatter)
-        self.logger.addHandler(ch)
-        self.logger.info("initialized")
 
     def do_GET(self):
-        print(2)
-        self.logger.info("GET {0}".format(self.path))
+        print(self.path)
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
