@@ -1,96 +1,74 @@
 import mysql.connector as mariadb
-
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 class dsmr5_server:
+    def __init__(self, hostname='localhost', port=10080):
+        self.hostname = hostname
+        self.port = port
+        self.httpd = HTTPServer((hostname, port), DSMRHandler)
+
+
+class DSMRHandler(BaseHTTPRequestHandler):
     def __init__(self):
         pass
 
+    def do_GET(self):
+        print self.path
 
-def aggregate_voltages():
-    db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
-    cursor = db.cursor()
 
-    sql = "SELECT value FROM voltage_L1 ORDER BY date DESC LIMIT 1"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    last_voltage = results[0][0]
 
-    cursor = db.cursor()
 
-    sql = "SELECT * FROM data WHERE OBIS_ref = '1-0:32.7.0' ORDER BY date"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    last_key = 0
+"""
+import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
-    for x in results:
-        if x[3] != last_voltage:
-            print(x)
-            last_voltage = x[3]
-            sql = "INSERT INTO voltage_L1 (`date`, `value`) VALUES (%s, %s)"
-            val = (x[2], x[3])
-            cursor.execute(sql, val)
-            db.commit()
-        last_key = x[0]
+HOST_NAME = 'localhost'
+PORT_NUMBER = 9000
 
-    sql = "DELETE FROM data WHERE OBIS_ref = '1-0:32.7.0' AND `key` < {0}".format(last_key)
-    cursor.execute(sql)
 
-    db.commit()
+class MyHandler(BaseHTTPRequestHandler):
+    def do_HEAD(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
 
-    cursor = db.cursor()
+    def do_GET(self):
+        paths = {
+            '/foo': {'status': 200},
+            '/bar': {'status': 302},
+            '/baz': {'status': 404},
+            '/qux': {'status': 500}
+        }
 
-    sql = "SELECT value FROM voltage_L2 ORDER BY date DESC LIMIT 1"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    last_voltage = results[0][0]
+        if self.path in paths:
+            self.respond(paths[self.path])
+        else:
+            self.respond({'status': 500})
 
-    cursor = db.cursor()
+    def handle_http(self, status_code, path):
+        self.send_response(status_code)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        content = '''
+        <html><head><title>Title goes here.</title></head>
+        <body><p>This is a test.</p>
+        <p>You accessed path: {}</p>
+        </body></html>
+        '''.format(path)
+        return bytes(content, 'UTF-8')
 
-    sql = "SELECT * FROM data WHERE OBIS_ref = '1-0:52.7.0' ORDER BY date"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    last_key = 0
+    def respond(self, opts):
+        response = self.handle_http(opts['status'], self.path)
+        self.wfile.write(response)
 
-    for x in results:
-        if x[3] != last_voltage:
-            print(x)
-            last_voltage = x[3]
-            sql = "INSERT INTO voltage_L2 (`date`, `value`) VALUES (%s, %s)"
-            val = (x[2], x[3])
-            cursor.execute(sql, val)
-            db.commit()
-        last_key = x[0]
-
-    sql = "DELETE FROM data WHERE OBIS_ref = '1-0:52.7.0' AND `key` < {0}".format(last_key)
-    cursor.execute(sql)
-
-    db.commit()
-
-    cursor = db.cursor()
-
-    sql = "SELECT value FROM voltage_L3 ORDER BY date DESC LIMIT 1"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    last_voltage = results[0][0]
-
-    cursor = db.cursor()
-
-    sql = "SELECT * FROM data WHERE OBIS_ref = '1-0:72.7.0' ORDER BY date"
-    cursor.execute(sql)
-    results = cursor.fetchall()
-    last_key = 0
-
-    for x in results:
-        if x[3] != last_voltage:
-            print(x)
-            last_voltage = x[3]
-            sql = "INSERT INTO voltage_L3 (`date`, `value`) VALUES (%s, %s)"
-            val = (x[2], x[3])
-            cursor.execute(sql, val)
-            db.commit()
-        last_key = x[0]
-
-    sql = "DELETE FROM data WHERE OBIS_ref = '1-0:72.7.0' AND `key` < {0}".format(last_key)
-    cursor.execute(sql)
-
-    db.commit()
+if __name__ == '__main__':
+    server_class = HTTPServer
+    httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
+    print(time.asctime(), 'Server Starts - %s:%s' % (HOST_NAME, PORT_NUMBER))
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    httpd.server_close()
+    print(time.asctime(), 'Server Stops - %s:%s' % (HOST_NAME, PORT_NUMBER))
+"""
