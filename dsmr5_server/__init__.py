@@ -8,6 +8,7 @@ class dsmr5_server:
         self.httpd = HTTPServer((hostname, port), DSMRHandler)
 
     def start(self):
+        print("Started")
         try:
             self.httpd.serve_forever()
         except KeyboardInterrupt:
@@ -18,6 +19,10 @@ class DSMRHandler(BaseHTTPRequestHandler):
         pass
 
     def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write('Test')
         print(self.path)
 
 
