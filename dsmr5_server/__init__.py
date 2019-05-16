@@ -1,14 +1,26 @@
 import mysql.connector as mariadb
+import logging
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 class dsmr5_server:
     def __init__(self, hostname='192.168.0.10', port=10080):
+        self.logger = logging.getLogger('DSMR server')
+
+        # self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
+
+        ch = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        self.logger.addHandler(ch)
+        self.logger.info("Httpd server initialized")
+
         self.hostname = hostname
         self.port = port
         self.httpd = HTTPServer((hostname, port), DSMRHandler)
 
     def start(self):
-        print("Started")
+        self.logger.info("Started")
         try:
             self.httpd.serve_forever()
         except KeyboardInterrupt:
@@ -18,15 +30,24 @@ class dsmr5_server:
 class DSMRHandler(BaseHTTPRequestHandler):
     def __init__(self, request, client_address, server):
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
-        print("Handler initialized")
+        self.logger = logging.getLogger('Handler')
+
+        # self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
+
+        ch = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        self.logger.addHandler(ch)
+        self.logger.info("initialized")
 
     def do_GET(self):
+        self.logger.info("GET {0}".format(self.path))
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
         message = 'Test'
         self.wfile.write(bytes(message, "utf8"))
-        print(self.path)
 
 
 
