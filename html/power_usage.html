@@ -25,8 +25,8 @@ var chart = new CanvasJS.Chart("chartContainer", {
 function addData(data) {
 	for (var i = 0; i < data.length; i++) {
 		dataPoints.push({
-			x: new Date(data[i].date),
-			y: data[i].units
+			x: new Date(data[i][0]),
+			y: data[i][1]
 		});
 	}
 	chart.render();
