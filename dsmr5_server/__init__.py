@@ -90,7 +90,7 @@ class DSMRHandler(BaseHTTPRequestHandler):
                 self.send_response(404)
 
     def get_data(self, name):
-        json_content = json.loads(name)
+        json_content = json.dumps(name)
         return json_content
 
 
