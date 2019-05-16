@@ -49,8 +49,9 @@ class DSMRHandler(BaseHTTPRequestHandler):
                     self.send_header('Content-type', 'text/html')
                     self.end_headers()
                     self.wfile.write(bytes(content, "utf8"))
-                except:
+                except Exception as e:
                     self.send_response(404)
+                    self.wfile.write(bytes(e, "utf8"))
             elif extension == 'css':
                 try:
                     file_location = 'css/{0}'.format(file)
@@ -60,8 +61,9 @@ class DSMRHandler(BaseHTTPRequestHandler):
                     self.send_header('Content-type', 'text/css')
                     self.end_headers()
                     self.wfile.write(bytes(content, "utf8"))
-                except:
+                except Exception as e:
                     self.send_response(404)
+                    self.wfile.write(bytes(e, "utf8"))
             elif extension == 'js':
                 try:
                     file_location = 'js/{0}'.format(file)
@@ -71,8 +73,9 @@ class DSMRHandler(BaseHTTPRequestHandler):
                     self.send_header('Content-type', 'text/javascript')
                     self.end_headers()
                     self.wfile.write(bytes(content, "utf8"))
-                except:
+                except Exception as e:
                     self.send_response(404)
+                    self.wfile.write(bytes(e, "utf8"))
             elif extension in ('data', 'json'):
                 try:
                     content = self.get_data(name)
@@ -80,9 +83,9 @@ class DSMRHandler(BaseHTTPRequestHandler):
                     self.send_header('Content-type', 'application/json')
                     self.end_headers()
                     self.wfile.write(bytes(content, "utf8"))
-                except:
+                except Exception as e:
                     self.send_response(404)
-
+                    self.wfile.write(bytes(e, "utf8"))
             else:
                 self.send_response(404)
 
