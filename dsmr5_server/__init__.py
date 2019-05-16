@@ -2,7 +2,7 @@ import mysql.connector as mariadb
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 class dsmr5_server:
-    def __init__(self, hostname='localhost', port=10080):
+    def __init__(self, hostname='192.168.0.10', port=10080):
         self.hostname = hostname
         self.port = port
         self.httpd = HTTPServer((hostname, port), DSMRHandler)
@@ -14,15 +14,18 @@ class dsmr5_server:
         except KeyboardInterrupt:
             pass
 
+
 class DSMRHandler(BaseHTTPRequestHandler):
     def __init__(self):
+        print("Handler initialized")
         pass
 
     def do_GET(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self.wfile.write('Test')
+        message = 'Test'
+        self.wfile.write(bytes(message, "utf8"))
         print(self.path)
 
 
