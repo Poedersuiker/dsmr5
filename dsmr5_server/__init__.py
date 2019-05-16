@@ -33,11 +33,32 @@ class DSMRHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         print(self.path)
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-        message = 'Test'
-        self.wfile.write(bytes(message, "utf8"))
+        path_list = self.path.split('/')
+
+        if len(path_list) > 2:
+            pass
+        else:
+            file = path_list[1]
+            name, extension = file.rsplit('.', 1)
+            if extension == 'html':
+                try:
+                    f = open('html/{0}'.format(file), "r")
+                    content = f.read()
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    self.wfile.write(bytes(content, "utf8"))
+                except:
+                    self.send_response(404)
+                    self.logger.error('{0}: File not found!'.format(file))
+            elif extension == 'css':
+                pass
+            elif extension == 'js':
+                pass
+            else:
+                self.send_response(404)
+
+
 
 
 
