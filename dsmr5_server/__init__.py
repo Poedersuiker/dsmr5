@@ -73,7 +73,7 @@ class DSMRHandler(BaseHTTPRequestHandler):
                     self.wfile.write(bytes(content, "utf8"))
                 except:
                     self.send_response(404)
-            elif extension == 'data' or extension == 'json':
+            elif extension in ('data', 'json'):
                 try:
                     content = self.get_data(name)
                     self.send_response(200)
