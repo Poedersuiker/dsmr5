@@ -38,10 +38,12 @@ function addData(name, data) {
 }
 
 
-$.getJSON("power.data", function(data) {
+$.getJSON("powerL1PP.data", function(data) {
     addData("Power L1 +P", data);
 });
-
+$.getJSON("powerL1MP.data", function(data) {
+    addData("Power L1 +P", data);
+});
 }
 </script>
 </head>
