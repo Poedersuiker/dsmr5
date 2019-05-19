@@ -16,23 +16,49 @@ var chart = new CanvasJS.Chart("chartContainer", {
 	axisY:{
 		includeZero: false
 	},
+	legend: {
+        cursor: "pointer",
+        verticalAlign: "top",
+        horizontalAlign: "top",
+        fontSize: 12,
+        fontFamily: "calibri",
+        fontColor: "dimGrey",
+        itemclick: toggleDataSeries
+    },
 	data: [{        
 		type: "line",       
-		dataPoints: dataPoints
+		data: dataSeries
 	}]
 });
 
 function addData(data) {
+	dps = [];
 	for (var i = 0; i < data.length; i++) {
-		dataPoints.push({
+		dps.push({
 			x: new Date(data[i][0]),
 			y: data[i][1]
 		});
 	}
+	dataSeries.push({
+        name: i,
+        type: "spline",
+        showInLegend: true,
+        dataPoints: dps
+    });
 	chart.render();
 
 }
 
+function toggleDataSeries(e) {
+  if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+    e.dataSeries.visible = false;
+  } else {
+    e.dataSeries.visible = true;
+  }
+  chart.render();
+}
+
+$.getJSON("power.data", addData);
 $.getJSON("power.data", addData);
 
 }
