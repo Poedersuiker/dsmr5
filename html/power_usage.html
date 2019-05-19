@@ -17,6 +17,13 @@ var chart = new CanvasJS.Chart("chartContainer", {
 	axisY:{
 		includeZero: false
 	},
+	legend: {
+        cursor: "pointer",
+        fontSize: 12,
+        fontFamily: "calibri",
+        fontColor: "dimGrey",
+        itemclick: toggleDataSeries
+    },
 	data: dataSeries
 });
 
@@ -37,12 +44,34 @@ function addData(name, data) {
 	chart.render();
 }
 
+function toggleDataSeries(e) {
+  if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+    e.dataSeries.visible = false;
+  } else {
+    e.dataSeries.visible = true;
+  }
+  chart.render();
+}
 
 $.getJSON("powerL1PP.data", function(data) {
     addData("Power L1 +P", data);
 });
 $.getJSON("powerL1MP.data", function(data) {
     addData("Power L1 +P", data);
+});
+}
+$.getJSON("powerL2PP.data", function(data) {
+    addData("Power L2 +P", data);
+});
+$.getJSON("powerL2MP.data", function(data) {
+    addData("Power L2 +P", data);
+});
+}
+$.getJSON("powerL3PP.data", function(data) {
+    addData("Power L3 +P", data);
+});
+$.getJSON("powerL3MP.data", function(data) {
+    addData("Power L3 +P", data);
 });
 }
 </script>
