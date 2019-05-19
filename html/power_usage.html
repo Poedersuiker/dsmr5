@@ -20,7 +20,7 @@ var chart = new CanvasJS.Chart("chartContainer", {
 	data: dataSeries
 });
 
-function addData(data) {
+function addData(name, data) {
 	dps = [];
 	for (var i = 0; i < data.length; i++) {
 		dps.push({
@@ -29,17 +29,18 @@ function addData(data) {
 		});
 	}
 	dataSeries.push({
-        name: i,
+        name: name,
         type: "spline",
         showInLegend: true,
         dataPoints: dps
     });
 	chart.render();
-
 }
 
 
-$.getJSON("power.data", addData);
+$.getJSON("power.data", function(data) {
+    addData("Power L1 +P", data);
+});
 
 }
 </script>
