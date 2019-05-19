@@ -25,6 +25,17 @@ var chart = new CanvasJS.Chart("chartContainer", {
         fontColor: "dimGrey",
         itemclick: toggleDataSeries
     },
+    toolTip: {
+        shared: true,
+        contentFormatter: function (e) {
+            var content = " ";
+            for (var i = 0; i < e.entries.length; i++) {
+                content += e.entries[i].dataPoint.x + " " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";
+                content += "<br/>";
+            }
+            return content;
+        }
+    },
 	data: dataSeries
 });
 
