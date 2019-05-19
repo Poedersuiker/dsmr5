@@ -91,10 +91,17 @@ class DSMRHandler(BaseHTTPRequestHandler):
 
     def get_data(self, name):
         json_content = json.dumps(name)
-        if name == 'power':
+        if name == 'powerL1PP':
             db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
             cursor = db.cursor()
             sql = "SELECT date, value FROM power_L1_PP ORDER BY date DESC LIMIT 1000"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL1MP':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L1_MP ORDER BY date DESC LIMIT 1000"
             cursor.execute(sql)
             results = cursor.fetchall()
             json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
