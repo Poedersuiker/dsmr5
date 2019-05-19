@@ -38,14 +38,6 @@ function addData(data) {
 
 }
 
-function toggleDataSeries(e) {
-  if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-    e.dataSeries.visible = false;
-  } else {
-    e.dataSeries.visible = true;
-  }
-  chart.render();
-}
 
 $.getJSON("power.data", addData);
 
