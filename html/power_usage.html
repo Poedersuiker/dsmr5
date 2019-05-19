@@ -26,10 +26,7 @@ var chart = new CanvasJS.Chart("chartContainer", {
         fontColor: "dimGrey",
         itemclick: toggleDataSeries
     },
-	data: [{        
-		type: "line",       
-		data: dataSeries
-	}]
+	data: dataSeries
 });
 
 function addData(data) {
