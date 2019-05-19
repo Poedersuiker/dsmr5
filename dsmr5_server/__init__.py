@@ -105,6 +105,34 @@ class DSMRHandler(BaseHTTPRequestHandler):
             cursor.execute(sql)
             results = cursor.fetchall()
             json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL2PP':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L2_PP ORDER BY date DESC LIMIT 1000"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL2MP':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L2_MP ORDER BY date DESC LIMIT 1000"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL3PP':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L3_PP ORDER BY date DESC LIMIT 1000"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL3MP':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L3_MP ORDER BY date DESC LIMIT 1000"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
         return json_content
 
 
