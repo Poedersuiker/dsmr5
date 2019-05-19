@@ -29,7 +29,7 @@ var chart = new CanvasJS.Chart("chartContainer", {
         shared: true,
         contentFormatter: function (e) {
             var content = " ";
-            content += "<strong>" + e.entries[i].dataPoint.x + ":</strong>";
+            content += "<strong>" + e.entries[0].dataPoint.x + ":</strong>";
             content += "<br/>";
             for (var i = 0; i < e.entries.length; i++) {
                 content += e.entries[i].dataSeries.name + " " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";
