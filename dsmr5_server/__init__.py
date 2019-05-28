@@ -60,7 +60,7 @@ class DSMRHandler(BaseHTTPRequestHandler):
                     self.send_response(200)
                     self.send_header('Content-type', 'image/x-icon')
                     self.end_headers()
-                    self.wfile.write(bytes(content, "utf8"))
+                    self.wfile.write(content)
                 except Exception as e:
                     self.send_response(404)
                     self.wfile.write(bytes(e, "utf8"))
