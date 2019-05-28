@@ -39,10 +39,26 @@ class DSMR(threading.Thread):
         self.last_power_L3_PP = 0
         self.last_power_L3_MP = 0
 
-        self.power_delivered_tariff1_times = [0, 15, 30, 45]
-        self.power_delivered_tariff2_times = [0, 15, 30, 45]
-        self.power_supplied_tariff1_times = [0, 15, 30, 45]
-        self.power_supplied_tariff2_times = [0, 15, 30, 45]
+        if datetime.datetime.now().minute < 15:
+            self.power_delivered_tariff1_times = [15, 30, 45, 0]
+            self.power_delivered_tariff2_times = [15, 30, 45, 0]
+            self.power_supplied_tariff1_times = [15, 30, 45, 0]
+            self.power_supplied_tariff2_times = [15, 30, 45, 0]
+        elif datetime.datetime.now().minute < 30:
+            self.power_delivered_tariff1_times = [30, 45, 0, 15]
+            self.power_delivered_tariff2_times = [30, 45, 0, 15]
+            self.power_supplied_tariff1_times = [30, 45, 0, 15]
+            self.power_supplied_tariff2_times = [30, 45, 0, 15]
+        elif datetime.datetime.now().minute < 45:
+            self.power_delivered_tariff1_times = [45, 0, 15, 30]
+            self.power_delivered_tariff2_times = [45, 0, 15, 30]
+            self.power_supplied_tariff1_times = [45, 0, 15, 30]
+            self.power_supplied_tariff2_times = [45, 0, 15, 30]
+        else:
+            self.power_delivered_tariff1_times = [0, 15, 30, 45]
+            self.power_delivered_tariff2_times = [0, 15, 30, 45]
+            self.power_supplied_tariff1_times = [0, 15, 30, 45]
+            self.power_supplied_tariff2_times = [0, 15, 30, 45]
 
         self.last_power_delivered_tariff1 = 0
         self.last_power_delivered_tariff2 = 0
@@ -115,7 +131,6 @@ class DSMR(threading.Thread):
 
                 # Power Delivered to home
                 elif OBISref == '1-0:1.8.1':
-                    self.logger.warning("New Power Delivered T1")
                     self.save_power_delivered_tariff1(data)
                 elif OBISref == '1-0:1.8.2':
                     self.save_power_delivered_tariff2(data)
