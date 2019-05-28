@@ -120,9 +120,9 @@ class DSMR(threading.Thread):
                     self.save_power_delivered_tariff2(data)
 
                 # Power Supplied from solar system
-                elif OBISref == '1-0:1.8.1':
+                elif OBISref == '1-0:2.8.1':
                     self.save_power_supplied_tariff1(data)
-                elif OBISref == '1-0:1.8.2':
+                elif OBISref == '1-0:2.8.2':
                     self.save_power_supplied_tariff2(data)
 
                 # Save all other data
