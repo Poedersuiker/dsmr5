@@ -133,6 +133,48 @@ class DSMRHandler(BaseHTTPRequestHandler):
             cursor.execute(sql)
             results = cursor.fetchall()
             json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL1PP_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L1_PP WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL1MP_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L1_MP WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL2PP_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L2_PP WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL2MP_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L2_MP WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL3PP_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L3_PP WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerL3MP_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, value FROM power_L3_MP WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
         return json_content
 
 
