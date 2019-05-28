@@ -55,7 +55,7 @@ class DSMRHandler(BaseHTTPRequestHandler):
             elif extension == 'ico':
                 try:
                     file_location = 'html/{0}'.format(file)
-                    f = open(file_location, "r")
+                    f = open(file_location, "rb")
                     content = f.read()
                     self.send_response(200)
                     self.send_header('Content-type', 'image/x-icon')
