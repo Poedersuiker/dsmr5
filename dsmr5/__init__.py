@@ -60,6 +60,11 @@ class DSMR(threading.Thread):
             self.power_supplied_tariff1_times = [0, 15, 30, 45]
             self.power_supplied_tariff2_times = [0, 15, 30, 45]
 
+        self.logger.info("power_delivered_tariff1 next {0}".format(self.power_delivered_tariff1_times[0]))
+        self.logger.info("power_delivered_tariff2 next {0}".format(self.power_delivered_tariff2_times[0]))
+        self.logger.info("power_supplied_tariff1 next {0}".format(self.power_supplied_tariff1_times[0]))
+        self.logger.info("power_supplied_tariff2 next {0}".format(self.power_supplied_tariff2_times[0]))
+
         self.last_power_delivered_tariff1 = 0
         self.last_power_delivered_tariff2 = 0
         self.last_power_supplied_tariff1 = 0
