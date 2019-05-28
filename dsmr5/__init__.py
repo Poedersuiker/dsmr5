@@ -265,14 +265,17 @@ class DSMR(threading.Thread):
     def save_power_delivered_tariff1(self, data):
         self.logger.debug("save_power_deliverd_tariff1: Next row")
         if datetime.datetime.now().minute == self.power_delivered_tariff1_times[0]:
-            delta = data - self.last_power_delivered_tariff1
-            cursor = self.db.cursor()
-            sql = "INSERT INTO power_delivered_tariff1 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
-            val = (datetime.datetime.now(), data, delta)
-            cursor.execute(sql, val)
-            self.db.commit()
-            self.last_power_delivered_tariff1 = data
-            self.next_power_delivered_tariff1()
+            try:
+                delta = data - self.last_power_delivered_tariff1
+                cursor = self.db.cursor()
+                sql = "INSERT INTO power_delivered_tariff1 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
+                val = (datetime.datetime.now(), data, delta)
+                cursor.execute(sql, val)
+                self.db.commit()
+                self.last_power_delivered_tariff1 = data
+                self.next_power_delivered_tariff1()
+            except Exception as e:
+                self.logger.warning("save_power_delivered_tariff1 INSERT FAILED: {0}".format(e))
         else:
             self.logger.debug("save_power_delivered_tariff1: Not time yet")
 
