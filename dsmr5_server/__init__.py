@@ -52,6 +52,18 @@ class DSMRHandler(BaseHTTPRequestHandler):
                 except Exception as e:
                     self.send_response(404)
                     self.wfile.write(bytes(e, "utf8"))
+            elif extension == 'ico':
+                try:
+                    file_location = 'html/{0}'.format(file)
+                    f = open(file_location, "r")
+                    content = f.read()
+                    self.send_response(200)
+                    self.send_header('Content-type', 'image/x-icon')
+                    self.end_headers()
+                    self.wfile.write(bytes(content, "utf8"))
+                except Exception as e:
+                    self.send_response(404)
+                    self.wfile.write(bytes(e, "utf8"))
             elif extension == 'css':
                 try:
                     file_location = 'css/{0}'.format(file)
