@@ -38,6 +38,17 @@ class DSMR(threading.Thread):
         self.last_power_L2_MP = 0
         self.last_power_L3_PP = 0
         self.last_power_L3_MP = 0
+
+        self.power_delivered_tariff1_times = [0, 15, 30, 45]
+        self.power_delivered_tariff2_times = [0, 15, 30, 45]
+        self.power_supplied_tariff1_times = [0, 15, 30, 45]
+        self.power_supplied_tariff2_times = [0, 15, 30, 45]
+
+        self.last_power_delivered_tariff1 = 0
+        self.last_power_delivered_tariff2 = 0
+        self.last_power_supplied_tariff1 = 0
+        self.last_power_supplied_tariff2 = 0
+
         self.get_last_values()
 
     def run(self):
@@ -101,6 +112,18 @@ class DSMR(threading.Thread):
                     self.save_power_L3_PP(data)
                 elif OBISref == '1-0:62.7.0':
                     self.save_power_L3_MP(data)
+
+                # Power Delivered to home
+                elif OBISref == '1-0:1.8.1':
+                    self.save_power_delivered_tariff1(data)
+                elif OBISref == '1-0:1.8.2':
+                    self.save_power_delivered_tariff2(data)
+
+                # Power Supplied from solar system
+                elif OBISref == '1-0:1.8.1':
+                    self.save_power_supplied_tariff1(data)
+                elif OBISref == '1-0:1.8.2':
+                    self.save_power_supplied_tariff2(data)
 
                 # Save all other data
                 else:
@@ -218,6 +241,62 @@ class DSMR(threading.Thread):
         else:
             self.logger.debug("save_voltage_L3: Voltage hasn't changed")
 
+    def save_power_delivered_tariff1(self, data):
+        self.logger.debug("save_power_deliverd_tariff1: Next row")
+        if datetime.datetime.now().minute == self.power_delivered_tariff1_times[0]:
+            self.next_power_delivered_tariff1()
+            delta = data - self.last_power_delivered_tariff1
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_delivered_tariff1 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
+            val = (datetime.datetime.now(), data, delta)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_delivered_tariff1 = data
+        else:
+            self.logger.debug("save_power_delivered_tariff1: Not time yet")
+
+    def save_power_delivered_tariff2(self, data):
+        self.logger.debug("save_power_delivered_tariff2: Next row")
+        if datetime.datetime.now().minute == self.power_delivered_tariff2_times[0]:
+            self.next_power_delivered_tariff2()
+            delta = data - self.last_power_delivered_tariff2
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_delivered_tariff2 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
+            val = (datetime.datetime.now(), data, delta)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_delivered_tariff2 = data
+        else:
+            self.logger.debug("save_power_delivered_tariff2: Not time yet")
+
+    def save_power_supplied_tariff1(self, data):
+        self.logger.debug("save_power_supplied_tariff1: Next row")
+        if datetime.datetime.now().minute == self.power_supplied_tariff1_times[0]:
+            self.next_power_supplied_tariff1()
+            delta = data - self.last_power_supplied_tariff1
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_supplied_tariff1 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
+            val = (datetime.datetime.now(), data, delta)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_supplied_tariff1 = data
+        else:
+            self.logger.debug("save_power_supplied_tariff1: Not time yet")
+
+    def save_power_supplied_tariff2(self, data):
+        self.logger.debug("save_power_supplied_tariff2: Next row")
+        if datetime.datetime.now().minute == self.power_supplied_tariff2_times[0]:
+            self.next_power_supplied_tariff2()
+            delta = data - self.last_power_supplied_tariff2
+            cursor = self.db.cursor()
+            sql = "INSERT INTO power_supplied_tariff2 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
+            val = (datetime.datetime.now(), data, delta)
+            cursor.execute(sql, val)
+            self.db.commit()
+            self.last_power_supplied_tariff2 = data
+        else:
+            self.logger.debug("save_power_supplied_tariff2: Not time yet")
+
     def save_data(self, OBISref, data):
         """
         If the OBISref is not yet implemented, Save all data to the data table.
@@ -249,6 +328,30 @@ class DSMR(threading.Thread):
             self.logger.error("Something went wrong!!!")
             self.logger.error("OBISref      : {0}".format(OBISref))
             self.logger.error("Data         : {0}".format(data))
+
+    def next_power_delivered_tariff1(self):
+        self.logger.info("power_delivered_tariff1 filed {0}".format(self.power_delivered_tariff1_times[0]))
+        new_list = self.power_delivered_tariff1_times[1:] + self.power_delivered_tariff1_times[:1]
+        self.power_delivered_tariff1_times = new_list
+        self.logger.info("power_delivered_tariff1 next {0}".format(self.power_delivered_tariff1_times[0]))
+
+    def next_power_delivered_tariff2(self):
+        self.logger.info("power_delivered_tariff2 filed {0}".format(self.power_delivered_tariff2_times[0]))
+        new_list = self.power_delivered_tariff2_times[1:] + self.power_delivered_tariff2_times[:1]
+        self.power_delivered_tariff2_times = new_list
+        self.logger.info("power_delivered_tariff2 next {0}".format(self.power_delivered_tariff2_times[0]))
+
+    def next_power_supplied_tariff1(self):
+        self.logger.info("power_supplied_tariff1 filed {0}".format(self.power_supplied_tariff1_times[0]))
+        new_list = self.power_supplied_tariff1_times[1:] + self.power_supplied_tariff1_times[:1]
+        self.power_supplied_tariff1_times = new_list
+        self.logger.info("power_supplied_tariff1 next {0}".format(self.power_supplied_tariff1_times[0]))
+
+    def next_power_supplied_tariff2(self):
+        self.logger.info("power_supplied_tariff2 filed {0}".format(self.power_supplied_tariff2_times[0]))
+        new_list = self.power_supplied_tariff2_times[1:] + self.power_supplied_tariff2_times[:1]
+        self.power_supplied_tariff2_times = new_list
+        self.logger.info("power_supplied_tariff2 next {0}".format(self.power_supplied_tariff2_times[0]))
 
     def get_last_values(self):
         cursor = self.db.cursor()
@@ -334,6 +437,42 @@ class DSMR(threading.Thread):
                 self.last_power_L3_MP = results[0][0]
             else:
                 self.last_power_L3_MP = 0
+
+            # Get last power delivered tariff1
+            sql = "SELECT meter FROM power_delivered_tariff1 ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_delivered_tariff1 = results[0][0]
+            else:
+                self.last_power_delivered_tariff1 = 0
+
+            # Get last power delivered tariff2
+            sql = "SELECT meter FROM power_delivered_tariff2 ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_delivered_tariff2 = results[0][0]
+            else:
+                self.last_power_delivered_tariff2 = 0
+
+            # Get last power supplied tariff1
+            sql = "SELECT meter FROM power_supplied_tariff1 ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_supplied_tariff1 = results[0][0]
+            else:
+                self.last_power_supplied_tariff1 = 0
+
+            # Get last power supplied tariff2
+            sql = "SELECT meter FROM power_supplied_tariff2 ORDER BY date DESC LIMIT 1"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                self.last_power_supplied_tariff2 = results[0][0]
+            else:
+                self.last_power_supplied_tariff2 = 0
         except:
             self.logger.error("Last values couldn't be retreived")
 
