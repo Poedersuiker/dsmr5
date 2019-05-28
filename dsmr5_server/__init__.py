@@ -175,6 +175,62 @@ class DSMRHandler(BaseHTTPRequestHandler):
             cursor.execute(sql)
             results = cursor.fetchall()
             json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerDT1_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, delta FROM power_delivered_tariff1 WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerDT1':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, delta FROM power_delivered_tariff1 ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerDT2_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, delta FROM power_delivered_tariff2 WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerDT2':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, delta FROM power_delivered_tariff2 ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerST1_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, delta FROM power_supplied_tariff1 WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerST1':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, delta FROM power_supplied_tariff1 ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerST2_week':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, delta FROM power_supplied_tariff2 WHERE date > CURRENT_DATE() - INTERVAL 1 WEEK ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
+        elif name == 'powerST2':
+            db = mariadb.connect(host='192.168.0.10', user='dsmr_user', passwd='dsmr_5098034ph', database='dsmr5')
+            cursor = db.cursor()
+            sql = "SELECT date, delta FROM power_supplied_tariff2 ORDER BY date DESC"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            json_content = json.dumps(results, indent=4, sort_keys=True, default=str)
         return json_content
 
 
