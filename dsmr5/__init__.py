@@ -39,7 +39,7 @@ class DSMR(threading.Thread):
         self.last_power_L3_PP = 0
         self.last_power_L3_MP = 0
 
-        self.power_delivered_tariff1_times = [0, 15, 30, 45]
+        self.power_delivered_tariff1_times = [0, 15, 23, 24, 25, 26, 27, 28, 29, 30, 45]
         self.power_delivered_tariff2_times = [0, 15, 30, 45]
         self.power_supplied_tariff1_times = [0, 15, 30, 45]
         self.power_supplied_tariff2_times = [0, 15, 30, 45]
@@ -244,7 +244,6 @@ class DSMR(threading.Thread):
     def save_power_delivered_tariff1(self, data):
         self.logger.debug("save_power_deliverd_tariff1: Next row")
         if datetime.datetime.now().minute == self.power_delivered_tariff1_times[0]:
-            self.next_power_delivered_tariff1()
             delta = data - self.last_power_delivered_tariff1
             cursor = self.db.cursor()
             sql = "INSERT INTO power_delivered_tariff1 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
@@ -252,13 +251,13 @@ class DSMR(threading.Thread):
             cursor.execute(sql, val)
             self.db.commit()
             self.last_power_delivered_tariff1 = data
+            self.next_power_delivered_tariff1()
         else:
             self.logger.debug("save_power_delivered_tariff1: Not time yet")
 
     def save_power_delivered_tariff2(self, data):
         self.logger.debug("save_power_delivered_tariff2: Next row")
         if datetime.datetime.now().minute == self.power_delivered_tariff2_times[0]:
-            self.next_power_delivered_tariff2()
             delta = data - self.last_power_delivered_tariff2
             cursor = self.db.cursor()
             sql = "INSERT INTO power_delivered_tariff2 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
@@ -266,13 +265,13 @@ class DSMR(threading.Thread):
             cursor.execute(sql, val)
             self.db.commit()
             self.last_power_delivered_tariff2 = data
+            self.next_power_delivered_tariff2()
         else:
             self.logger.debug("save_power_delivered_tariff2: Not time yet")
 
     def save_power_supplied_tariff1(self, data):
         self.logger.debug("save_power_supplied_tariff1: Next row")
         if datetime.datetime.now().minute == self.power_supplied_tariff1_times[0]:
-            self.next_power_supplied_tariff1()
             delta = data - self.last_power_supplied_tariff1
             cursor = self.db.cursor()
             sql = "INSERT INTO power_supplied_tariff1 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
@@ -280,13 +279,13 @@ class DSMR(threading.Thread):
             cursor.execute(sql, val)
             self.db.commit()
             self.last_power_supplied_tariff1 = data
+            self.next_power_supplied_tariff1()
         else:
             self.logger.debug("save_power_supplied_tariff1: Not time yet")
 
     def save_power_supplied_tariff2(self, data):
         self.logger.debug("save_power_supplied_tariff2: Next row")
         if datetime.datetime.now().minute == self.power_supplied_tariff2_times[0]:
-            self.next_power_supplied_tariff2()
             delta = data - self.last_power_supplied_tariff2
             cursor = self.db.cursor()
             sql = "INSERT INTO power_supplied_tariff2 (`date`, `meter`, `delta`) VALUES (%s, %s, %s)"
@@ -294,6 +293,7 @@ class DSMR(threading.Thread):
             cursor.execute(sql, val)
             self.db.commit()
             self.last_power_supplied_tariff2 = data
+            self.next_power_supplied_tariff2()
         else:
             self.logger.debug("save_power_supplied_tariff2: Not time yet")
 
