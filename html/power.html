@@ -15,7 +15,11 @@ var chart = new CanvasJS.Chart("chartContainer", {
 	title:{
 		text: "Power Chart"
 	},
-	axisY:{
+	axisX:{
+        valueFormatString: "D-M H:mm" ,
+        labelAngle: -50
+    },
+    axisY:{
 		includeZero: false
 	},
 	legend: {
